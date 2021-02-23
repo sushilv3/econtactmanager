@@ -22,6 +22,7 @@ public class Contact {
 	private String email;
 	private String phone;
 	private String imgUrl;
+	@Column(length = 500)
 	private String description;
 	
 	@ManyToOne()
