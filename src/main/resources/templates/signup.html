@@ -10,19 +10,28 @@
 			<div class="row">
 				<div class="col-md-6 offset-md-3">
 					<div class="my-card mt-2">
+					
+						<div th:if="${session.message}" th:classappend="${session.message.type}" class="alert" role="alert">
+	 						<p class="text-center" th:text="${session.message.content}"></p>
+	 						<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+						</div>
+						
 						<h1 class="text-center">Register Here</h1>
-						<form action="" th:action="@{do_register}" method="post">
+						
+						<form action="" th:action="@{/do_register}" method="post" th:object="${user}" >
 							
 							<!-- name field -->
 							 <div class="form-group">
 							    <label for="name_field">Your Name</label>
 							    
 							    <input type="text" 
+							    	name="name"
 							    	class="form-control" 
 							    	id="name_field" 
 							    	aria-describedby="emailHelp"
 								   	placeholder="Enter Here"
 								   	required="required"
+								   	th:value="${user.name}"
 								   	/>
 							  </div>
 							  
@@ -33,11 +42,13 @@
 							    <label for="email_field">Your E-mail</label>
 							    
 							    <input type="email" 
+							    	name="email"
 							    	class="form-control" 
 							    	id="email_field" 
 							    	aria-describedby="emailHelp"
 								   	placeholder="Enter Here"
 								   	required="required"
+								   	th:value="${user.email}"
 								   	/>
 							  </div>
 							  
@@ -46,6 +57,7 @@
 							    <label for="password_field">Your Password</label>
 							    
 							    <input type="password" 
+							    	name="password"
 							    	class="form-control" 
 							    	id="password_field" 
 							    	aria-describedby="emailHelp"
@@ -56,8 +68,17 @@
 						
 							<!-- user about field -->
 							  
-							  <div class="form-group">
-							  	<textarea placeholder="Enter somthing yourself" name="" id="" rows="6" class="form-control"></textarea>
+							 <div class="form-group">
+							  	<textarea name="about" th:value="${user.about}" placeholder="Enter somthing yourself" id="" rows="6" class="form-control" required="required"></textarea>
+ 							  </div>
+							  
+							  <!-- terms and condition agreement -->
+							  
+							  <div class="form-group form-check text-center">
+							  
+							  	<input type="checkbox" name="agreement" id="agreement">
+							  	<label for="agreement">Accept terms and conditions</label>
+							  
 							  </div>
 							  
 							  <div class="container text-center">
