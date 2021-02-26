@@ -18,7 +18,7 @@
 						
 						<h1 class="text-center">Register Here</h1>
 						
-						<form action="" th:action="@{/do_register}" method="post" th:object="${user}" >
+						<form novalidate action="" th:action="@{/do_register}" method="post" th:object="${user}" >
 							
 							<!-- name field -->
 							 <div class="form-group">
@@ -26,14 +26,21 @@
 							    
 							    <input type="text" 
 							    	name="name"
-							    	class="form-control" 
+							    	class="form-control is-invalid" 
+							    	th:classappend="${#fields.hasErrors('name') ? 'is-invalid':''}"
 							    	id="name_field" 
 							    	aria-describedby="emailHelp"
 								   	placeholder="Enter Here"
 								   	required="required"
 								   	th:value="${user.name}"
 								   	/>
+								   	
+								 <div class="invalid-feedback" th:each="e : ${#fields.errors('name')}" th:text="${e}">
+								  							  		
+								  </div> 
 							  </div>
+			
+							 
 							  
 							  
 							
