@@ -12,101 +12,105 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="USER")
+@Table(name = "USER")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-		private int id;
-		private String name;
-		@Column(unique = true)
-		private String email;
-		private String password;
-		private String role;
-		private boolean enable;
-		private String imgUrl;
-		@Column(length = 500)
-		private String about;
-		
-		@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-		private List<Contact> contacts =new ArrayList<>();
-		
-		public User() {
-			
-			
-		}
+	private int id;
 
-		public int getId() {
-			return id;
-		}
+	@NotBlank(message = "Name field id required !!")
+	@Size(min = 2, max = 20, message = "min 2 and max 20 characters are allowed !!")
+	private String name;
+	@Column(unique = true)
+	private String email;
+	private String password;
+	private String role;
+	private boolean enable;
+	private String imgUrl;
+	@Column(length = 500)
+	private String about;
 
-		public void setId(int id) {
-			this.id = id;
-		}
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+	private List<Contact> contacts = new ArrayList<>();
 
-		public String getName() {
-			return name;
-		}
+	public User() {
 
-		public void setName(String name) {
-			this.name = name;
-		}
+	}
 
-		public String getEmail() {
-			return email;
-		}
+	public int getId() {
+		return id;
+	}
 
-		public void setEmail(String email) {
-			this.email = email;
-		}
+	public void setId(int id) {
+		this.id = id;
+	}
 
-		public String getPassword() {
-			return password;
-		}
+	public String getName() {
+		return name;
+	}
 
-		public void setPassword(String password) {
-			this.password = password;
-		}
+	public void setName(String name) {
+		this.name = name;
+	}
 
-		public String getRole() {
-			return role;
-		}
+	public String getEmail() {
+		return email;
+	}
 
-		public void setRole(String role) {
-			this.role = role;
-		}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-		public boolean isEnable() {
-			return enable;
-		}
+	public String getPassword() {
+		return password;
+	}
 
-		public void setEnable(boolean enable) {
-			this.enable = enable;
-		}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-		public String getImgUrl() {
-			return imgUrl;
-		}
+	public String getRole() {
+		return role;
+	}
 
-		public void setImgUrl(String imgUrl) {
-			this.imgUrl = imgUrl;
-		}
+	public void setRole(String role) {
+		this.role = role;
+	}
 
-		public String getAbout() {
-			return about;
-		}
+	public boolean isEnable() {
+		return enable;
+	}
 
-		public void setAbout(String about) {
-			this.about = about;
-		}
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
 
-		public List<Contact> getContacts() {
-			return contacts;
-		}
+	public String getImgUrl() {
+		return imgUrl;
+	}
 
-		public void setContacts(List<Contact> contacts) {
-			this.contacts = contacts;
-		}
-		
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
+	public String getAbout() {
+		return about;
+	}
+
+	public void setAbout(String about) {
+		this.about = about;
+	}
+
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
 }
