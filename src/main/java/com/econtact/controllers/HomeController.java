@@ -63,6 +63,7 @@ public class HomeController {
 			user.setRole("ROLE_USER");
 			user.setEnable(true);
 			
+			//password encode
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			User result = this.userRepository.save(user);
 
