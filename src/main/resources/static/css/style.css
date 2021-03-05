@@ -56,13 +56,15 @@ background: #ECEFF1 !important;
 	height:100vh;
 	position:fixed;
 	padding-top:45px;
+	z-index:999;
 
 }
 .sidebar a{
 	display:block;
 	width:100%;
 	padding:10px 25px;
-	text-decoration: none
+	text-decoration: none;
+
 }
 
 .sidebar a:hover{
