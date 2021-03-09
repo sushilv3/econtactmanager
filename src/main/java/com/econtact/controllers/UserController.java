@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.econtact.entities.Contact;
 import com.econtact.entities.User;
 import com.econtact.helper.Message;
+import com.econtact.repositories.ContactRepository;
 import com.econtact.repositories.UserRepository;
+
 
 @Controller
 @RequestMapping("/user")
@@ -31,6 +34,9 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private ContactRepository contactRepository;
 
 	// execute before every handler call "method for adding common data to response"
 	@ModelAttribute
@@ -117,6 +123,20 @@ public class UserController {
 		}
 
 		return "normal/add_contact_form";
+	}
+	
+	//show contacts handler
+	@GetMapping("/show-contacts")
+	public String showContacts(Model model,Principal principal) {
+		model.addAttribute("title","Show User Contacts");
+		//sent contacts list
+		String username = principal.getName();
+		User user = this.userRepository.GetUserByUserName(username);
+		
+		List<Contact> contacts = this.contactRepository.findContactByUser(user.getId());
+		model.addAttribute("contacts",contacts);
+		System.out.println("@@@@@ called inside show-contact handler ===== Conact List ::::  "+contacts);
+		return "normal/show_contacts";
 	}
 
 }
