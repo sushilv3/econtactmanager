@@ -91,5 +91,11 @@ background: #ECEFF1 !important;
 	cursor: pointer;
 }
 
+.my_profile_picture{
+	width:30px;
+	height:30px;
+	object-fit:cover;
+}
+
 
 
