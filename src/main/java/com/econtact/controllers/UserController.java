@@ -31,6 +31,7 @@ import com.econtact.entities.User;
 import com.econtact.helper.Message;
 import com.econtact.repositories.ContactRepository;
 import com.econtact.repositories.UserRepository;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
 
 @Controller
@@ -197,4 +198,15 @@ public class UserController {
 		return "redirect:/user/show-contacts/0";
 	}
 
+	
+	//open update form handler
+	
+	@PostMapping("/update-contact/{cId}")
+	public String updateForm(@PathVariable("cId") Integer cId,Model model) {
+		
+		model.addAttribute("title","Update Contact");
+		Contact contact = this.contactRepository.findById(cId).get();
+		model.addAttribute("contact",contact);
+		return "normal/update_form";
+	}
 }
