@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,14 +34,13 @@ import com.econtact.repositories.ContactRepository;
 import com.econtact.repositories.UserRepository;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
-
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private ContactRepository contactRepository;
 
@@ -115,98 +115,141 @@ public class UserController {
 
 			System.out.println("Added to data Base");
 			System.out.println("User ::::: " + user);
-			
-			//message success.....
-			
+
+			// message success.....
+
 			session.setAttribute("message", new Message("Your Contact is added !! Add more..", "success"));
-			
-			
+
 		} catch (Exception e) {
 			System.out.println("Error " + e.getMessage());
 			e.printStackTrace();
-			//message error
+			// message error
 			session.setAttribute("message", new Message("Something went wrong .... try again", "danger"));
-			
+
 		}
 
 		return "normal/add_contact_form";
 	}
-	
-	//show contacts handler
-	//per page =2[n]
-	//current page =0[page]
+
+	// show contacts handler
+	// per page =2[n]
+	// current page =0[page]
 	@GetMapping("/show-contacts/{page}")
-	public String showContacts(@PathVariable("page") Integer page,Model model,Principal principal) {
-		model.addAttribute("title","Show User Contacts");
-		//sent contacts list
+	public String showContacts(@PathVariable("page") Integer page, Model model, Principal principal) {
+		model.addAttribute("title", "Show User Contacts");
+		// sent contacts list
 		String username = principal.getName();
 		User user = this.userRepository.GetUserByUserName(username);
-	
-		Pageable pageable = PageRequest.of(page,2);
-		
-		Page<Contact> contacts = this.contactRepository.findContactByUser(user.getId(),pageable);
-		
-		model.addAttribute("contacts",contacts);
-		
-		model.addAttribute("currentPage",page);
-		
-		model.addAttribute("totalPages",contacts.getTotalPages());
-		
-		System.out.println("@@@@@ called inside show-contact handler ===== Conact List ::::  "+contacts);
+
+		Pageable pageable = PageRequest.of(page, 2);
+
+		Page<Contact> contacts = this.contactRepository.findContactByUser(user.getId(), pageable);
+
+		model.addAttribute("contacts", contacts);
+
+		model.addAttribute("currentPage", page);
+
+		model.addAttribute("totalPages", contacts.getTotalPages());
+
+		System.out.println("@@@@@ called inside show-contact handler ===== Conact List ::::  " + contacts);
 		return "normal/show_contacts";
 	}
-	
-	
-	//showing specific contact details handler
-	
+
+	// showing specific contact details handler
+
 	@RequestMapping("/contact/{cId}")
 	public String showContactDetail(@PathVariable("cId") Integer cId, Model model, Principal principal) {
-		System.out.println("%%%% called inside showContactDeatil and value of CID : "+cId);
-		
+		System.out.println("%%%% called inside showContactDeatil and value of CID : " + cId);
+
 		Optional<Contact> contactOptional = this.contactRepository.findById(cId);
 		Contact contact = contactOptional.get();
-		
+
 		//
 		String userName = principal.getName();
 		User user = this.userRepository.GetUserByUserName(userName);
-		if(user.getId()==contact.getUser().getId()) {
-			
-			model.addAttribute("contact",contact);
+		if (user.getId() == contact.getUser().getId()) {
+
+			model.addAttribute("contact", contact);
 			model.addAttribute("title", contact.getName());
 		}
-		
-		System.out.println("*****Contact :: "+contact);
-		
+
+		System.out.println("*****Contact :: " + contact);
+
 		return "normal/contact_detail";
 	}
-	
-	//delete contact handler
+
+	// delete contact handler
 	@GetMapping("/delete/{cId}")
 	public String deleteContact(@PathVariable("cId") Integer cId, Model model, HttpSession session) {
-		
+
 		Optional<Contact> contactOptional = this.contactRepository.findById(cId);
 		Contact contact = contactOptional.get();
-		//unlink contect to user
+		// unlink contect to user
 		contact.setUser(null);
-		//check....
-		
+		// check....
+
 		//
 		this.contactRepository.delete(contact);
-		
+
 		session.setAttribute("message", new Message("Contact deteted successfully...", "success"));
-		
+
 		return "redirect:/user/show-contacts/0";
 	}
 
-	
-	//open update form handler
-	
+	// open update form handler
+
 	@PostMapping("/update-contact/{cId}")
-	public String updateForm(@PathVariable("cId") Integer cId,Model model) {
-		
-		model.addAttribute("title","Update Contact");
+	public String updateForm(@PathVariable("cId") Integer cId, Model model) {
+
+		model.addAttribute("title", "Update Contact");
 		Contact contact = this.contactRepository.findById(cId).get();
-		model.addAttribute("contact",contact);
+		model.addAttribute("contact", contact);
 		return "normal/update_form";
+	}
+
+	// update contact handler
+
+	@RequestMapping(value = "/process-update", method = RequestMethod.POST)
+	public String updateHandler(@ModelAttribute Contact contact, @RequestParam("profileImage") MultipartFile file,
+			Model model, HttpSession session, Principal principal) {
+
+		try {
+			//fetch old contact detail
+			Contact oldContactDetail = this.contactRepository.findById(contact.getcId()).get();
+			// image..
+			if (!file.isEmpty()) {
+				// file work... rewrite
+				
+				//delete old photo
+				File deleteFile = new ClassPathResource("static/img").getFile();
+				File file1 = new File(deleteFile, oldContactDetail.getImgUrl());
+				file1.delete();
+				
+				//update new photo
+				File saveFile = new ClassPathResource("static/img").getFile();
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+
+				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+				contact.setImgUrl(file.getOriginalFilename());
+
+			}
+			else {
+				contact.setImgUrl(oldContactDetail.getImgUrl());
+			}
+			User user = this.userRepository.GetUserByUserName(principal.getName());
+			contact.setUser(user);	
+			this.contactRepository.save(contact);
+			
+			session.setAttribute("message", new Message("Your Contact is updated...", "success"));
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(" ##UPDATE CONTACT HANDLER## ");
+		System.out.println("Contact Name " + contact.getName());
+		System.out.println("Contact ID " + contact.getcId());
+		return "redirect:/user/contact/"+contact.getcId();
 	}
 }
