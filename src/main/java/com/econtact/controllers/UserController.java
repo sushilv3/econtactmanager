@@ -180,16 +180,19 @@ public class UserController {
 
 	// delete contact handler
 	@GetMapping("/delete/{cId}")
-	public String deleteContact(@PathVariable("cId") Integer cId, Model model, HttpSession session) {
+	public String deleteContact(@PathVariable("cId") Integer cId, Model model, HttpSession session, Principal principal) {
 
 		Optional<Contact> contactOptional = this.contactRepository.findById(cId);
 		Contact contact = contactOptional.get();
 		// unlink contect to user
-		contact.setUser(null);
 		// check....
 
 		//
-		this.contactRepository.delete(contact);
+		User user = this.userRepository.GetUserByUserName(principal.getName());
+		
+		user.getContacts().remove(contact);
+		
+		this.userRepository.save(user);
 
 		session.setAttribute("message", new Message("Contact deteted successfully...", "success"));
 
@@ -214,35 +217,33 @@ public class UserController {
 			Model model, HttpSession session, Principal principal) {
 
 		try {
-			//fetch old contact detail
+			// fetch old contact detail
 			Contact oldContactDetail = this.contactRepository.findById(contact.getcId()).get();
 			// image..
 			if (!file.isEmpty()) {
 				// file work... rewrite
-				
-				//delete old photo
+
+				// delete old photo
 				File deleteFile = new ClassPathResource("static/img").getFile();
 				File file1 = new File(deleteFile, oldContactDetail.getImgUrl());
 				file1.delete();
-				
-				//update new photo
+
+				// update new photo
 				File saveFile = new ClassPathResource("static/img").getFile();
 				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + file.getOriginalFilename());
 
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 				contact.setImgUrl(file.getOriginalFilename());
 
-			}
-			else {
+			} else {
 				contact.setImgUrl(oldContactDetail.getImgUrl());
 			}
 			User user = this.userRepository.GetUserByUserName(principal.getName());
-			contact.setUser(user);	
+			contact.setUser(user);
 			this.contactRepository.save(contact);
-			
+
 			session.setAttribute("message", new Message("Your Contact is updated...", "success"));
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -250,6 +251,6 @@ public class UserController {
 		System.out.println(" ##UPDATE CONTACT HANDLER## ");
 		System.out.println("Contact Name " + contact.getName());
 		System.out.println("Contact ID " + contact.getcId());
-		return "redirect:/user/contact/"+contact.getcId();
+		return "redirect:/user/contact/" + contact.getcId();
 	}
 }
