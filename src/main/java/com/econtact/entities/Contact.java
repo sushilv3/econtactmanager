@@ -10,6 +10,8 @@ import javax.persistence.Table;
 
 import org.hibernate.type.StringNVarcharType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="CONTACT")
 public class Contact {
@@ -26,6 +28,7 @@ public class Contact {
 	private String description;
 	
 	@ManyToOne()
+	@JsonIgnore
 	private User user;
 	
 	public Contact() {
