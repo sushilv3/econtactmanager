@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.econtact.entities.Contact;
+import com.econtact.entities.User;
 
 public interface ContactRepository extends JpaRepository<Contact, Integer>{
 	
@@ -18,5 +19,10 @@ public interface ContactRepository extends JpaRepository<Contact, Integer>{
 	//currentPage = page
 	//Contact per apge = 2
 	public Page<Contact> findContactByUser(@Param("userId")int userId, Pageable pageable);
+	
+	//predefine search method
+	public List<Contact> findByNameContainingAndUser(String name, User user);
+
+
 
 }
