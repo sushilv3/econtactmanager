@@ -17,19 +17,19 @@
 						
 								<h3 class="my-3">Change password</h3>
 								
-								<form action="">
+								<form th:action = "@{/user/change-password}" action="" method="post">
 									
 									<!-- old password field -->
 										<div class="form-group">
 										
-											<input class="form-control" placeholder="Enter Old Password" type="text" />
+											<input class="form-control" name ="oldPassword" placeholder="Enter Old Password" type="password" />
 										
 										</div>		
 
 									<!-- new password field -->
 										<div class="form-group">
 										
-											<input class="form-control" placeholder="Enter New Password" type="text" />
+											<input class="form-control"  name ="newPassword" placeholder="Enter New Password" type="password" />
 										
 										</div>		
 											
