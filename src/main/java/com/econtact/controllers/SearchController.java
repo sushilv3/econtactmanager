@@ -30,7 +30,7 @@ public class SearchController {
 		
 		System.out.println(query);
 		
-		User user = userRepository.GetUserByUserName(principal.getName());
+		User user = userRepository.getUserByUserName(principal.getName());
 		
 		List<Contact> contacts = this.contactRepository.findByNameContainingAndUser(query, user);
 		

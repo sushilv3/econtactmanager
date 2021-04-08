@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 	
 		//fetching user from database
 		
-		User user = userRepository.GetUserByUserName(username);
+		User user = userRepository.getUserByUserName(username);
 		if(user==null) {
 			throw new UsernameNotFoundException("Could not found user !!");
 		}

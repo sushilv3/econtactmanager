@@ -56,7 +56,7 @@ public class UserController {
 		System.out.println(" INSIDE USER CONTROLL => DASHBOARD METHOD USER NAME : " + userName);
 		// get the userName(email)
 
-		User user = userRepository.GetUserByUserName(userName);
+		User user = userRepository.getUserByUserName(userName);
 		System.out.println("INSIDE USER CONTROLL => DASHBOARD METHOD USER OBJECT : " + user);
 
 		model.addAttribute("user", user);
@@ -87,7 +87,7 @@ public class UserController {
 
 		try {
 			String userName = principal.getName();
-			User user = this.userRepository.GetUserByUserName(userName);
+			User user = this.userRepository.getUserByUserName(userName);
 
 			contact.setUser(user);
 
@@ -143,7 +143,7 @@ public class UserController {
 		model.addAttribute("title", "Show User Contacts");
 		// sent contacts list
 		String username = principal.getName();
-		User user = this.userRepository.GetUserByUserName(username);
+		User user = this.userRepository.getUserByUserName(username);
 
 		Pageable pageable = PageRequest.of(page, 2);
 
@@ -170,7 +170,7 @@ public class UserController {
 
 		//
 		String userName = principal.getName();
-		User user = this.userRepository.GetUserByUserName(userName);
+		User user = this.userRepository.getUserByUserName(userName);
 		if (user.getId() == contact.getUser().getId()) {
 
 			model.addAttribute("contact", contact);
@@ -192,7 +192,7 @@ public class UserController {
 		// check....
 
 		//
-		User user = this.userRepository.GetUserByUserName(principal.getName());
+		User user = this.userRepository.getUserByUserName(principal.getName());
 		
 		user.getContacts().remove(contact);
 		
@@ -242,7 +242,7 @@ public class UserController {
 			} else {
 				contact.setImgUrl(oldContactDetail.getImgUrl());
 			}
-			User user = this.userRepository.GetUserByUserName(principal.getName());
+			User user = this.userRepository.getUserByUserName(principal.getName());
 			contact.setUser(user);
 			this.contactRepository.save(contact);
 
@@ -284,7 +284,7 @@ public class UserController {
 		System.out.println("=================Inside change password NEW PASSWORD "+newPassword);
 		
 		String userName = principal.getName();
-		User currentUser = this.userRepository.GetUserByUserName(userName);
+		User currentUser = this.userRepository.getUserByUserName(userName);
 		
 		System.out.println("Current user password "+ currentUser.getPassword());
 		

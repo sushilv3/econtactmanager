@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.econtact.entities.User;
+import com.econtact.repositories.UserRepository;
 import com.econtact.services.EmailService;
 
 @Controller
@@ -19,6 +21,9 @@ public class forgotController {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	//emmail id form open handler
 	@RequestMapping("/forgot")
@@ -52,7 +57,8 @@ public class forgotController {
 		
 		if(flag)
 		{
-			session.setAttribute("otp", otp);
+			session.setAttribute("myotp", otp);
+			session.setAttribute("emial", email);
 			return "verify_otp";
 		}
 		else {
@@ -62,5 +68,39 @@ public class forgotController {
 		}
 		
 	}
+	
+	//verify otp
+	
+	@PostMapping("/verify-otp")
+	public String verifyotp (@RequestParam("otp") int otp, HttpSession session) {
+		
+		int myOtp = (int)session.getAttribute("myotp");
+		String email = (String)session.getAttribute("email");
+		
+		if(myOtp==otp) {
+			
+			//password change form
+			User user = this.userRepository.getUserByUserName(email);
+			
+			if(user==null) {
+				//sent error message
+				
+				session.setAttribute("message", "User does not exist with this email");
+				return "forgot_email_form";
+				
+			}else {
+//				sent change password form
+			}
+			
+			return "password_change_form";
+			
+		}
+		else {
+			session.setAttribute("message", "You Have Entered Wrong OTP");
+			return "verify_otp";
+		}
+		
+	}
+	
 	
 }
